@@ -1,27 +1,30 @@
 pipeline {
-    agent {
-        docker {
-            image 'maven:3.9.6-eclipse-temurin-21'
-            args '-v /var/jenkins_home/.m2:/var/jenkins_home/.m2'
-            reuseNode true
-        }
-    }
-
-    environment {
-        HOME = '/var/jenkins_home'
-        MAVEN_CONFIG = '/var/jenkins_home/.m2'
-    }
+    agent any
 
     stages {
         stage('Build') {
             steps {
-                sh 'mvn clean install'
+                sh '''
+                docker run --rm \
+                  -v "$PWD:/app" \
+                  -v "$HOME/.m2:/root/.m2" \
+                  -w /app \
+                  maven:3.9.6-eclipse-temurin-21 \
+                  mvn clean install
+                '''
             }
         }
 
         stage('Test') {
             steps {
-                sh 'mvn test'
+                sh '''
+                docker run --rm \
+                  -v "$PWD:/app" \
+                  -v "$HOME/.m2:/root/.m2" \
+                  -w /app \
+                  maven:3.9.6-eclipse-temurin-21 \
+                  mvn test
+                '''
             }
         }
     }
