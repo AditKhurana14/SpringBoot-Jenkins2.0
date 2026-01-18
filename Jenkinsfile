@@ -1,28 +1,32 @@
 pipeline {
     agent any
 
+    tools {
+        jdk 'JDK-21'
+        maven 'Maven-3.9'
+    }
+
     stages {
-        stage('Build') {
+
+        stage('Build JAR') {
             steps {
-                bat """
-                docker run --rm ^
-                  -v "%CD%:/app" ^
-                  -w /app ^
-                  maven:3.9.6-eclipse-temurin-21 ^
-                  mvn clean install
-                """
+                sh 'mvn clean package -DskipTests'
             }
         }
 
-        stage('Test') {
+        stage('Build Docker Image') {
             steps {
-                bat """
-                docker run --rm ^
-                  -v "%CD%:/app" ^
-                  -w /app ^
-                  maven:3.9.6-eclipse-temurin-21 ^
-                  mvn test
-                """
+                sh 'docker build -t springboot-app:1.0 .'
+            }
+        }
+
+        stage('Run Container') {
+            steps {
+                sh '''
+                docker stop springboot-app || true
+                docker rm springboot-app || true
+                docker run -d -p 8000:8000 --name springboot-app springboot-app:1.0
+                '''
             }
         }
     }
