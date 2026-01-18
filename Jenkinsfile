@@ -10,7 +10,7 @@ pipeline {
 
         stage('Build JAR') {
             steps {
-                sh 'mvn clean package -DskipTests'
+                sh 'mvn clean package -DskipTests -Dmaven.repo.local=$MAVEN_CONFIG/repository'
             }
         }
 
