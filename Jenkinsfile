@@ -18,6 +18,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
 //                sh 'docker build -t springboot-app:1.0 .'
+                echo"eelooo"
             }
         }
 
@@ -27,6 +28,7 @@ pipeline {
 //////                docker stop springboot-app || true
 //////                docker rm springboot-app || true
 //////                docker run -d -p 8000:8000 --name springboot-app springboot-app:1.0
+        echo"eelooo"
 ////                '''
 //            }
 //        }
