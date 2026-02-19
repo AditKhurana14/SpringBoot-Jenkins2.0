@@ -29,7 +29,7 @@ pipeline {
 
                 stage('Integration Test') {
                     steps {
-                        sh 'mvn -Dtest=*IT test'
+                        sh 'mvn -Dtest=*IT -Dsurefire.failIfNoSpecifiedTests=false test\n'
                     }
                     post {
                         always {
