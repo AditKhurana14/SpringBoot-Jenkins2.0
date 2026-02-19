@@ -9,13 +9,35 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'mvn clean compile'
+                sh 'mvn clean compile -DskipTests'
             }
         }
 
-        stage('Test') {
-            steps {
-                sh 'mvn test'
+        stage('Parallel Tests') {
+            parallel {
+
+                stage('Unit Test') {
+                    steps {
+                        sh 'mvn -Dtest=*Test test'
+                    }
+                    post {
+                        always {
+                            junit 'target/surefire-reports/*.xml'
+                        }
+                    }
+                }
+
+                stage('Integration Test') {
+                    steps {
+                        sh 'mvn -Dtest=*IT test'
+                    }
+                    post {
+                        always {
+                            junit 'target/surefire-reports/*.xml'
+                        }
+                    }
+                }
+
             }
         }
 
@@ -29,6 +51,18 @@ pipeline {
             steps {
                 archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
             }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline Created'
+        }
+        failure {
+            echo 'Pipeline Failed'
+        }
+        always {
+            cleanWs()
         }
     }
 }
