@@ -18,7 +18,7 @@ pipeline {
 
                 stage('Unit Test') {
                     steps {
-                        sh 'mvn -Dtest=*Test test'
+                        sh 'mvn test'
                     }
                     post {
                         always {
