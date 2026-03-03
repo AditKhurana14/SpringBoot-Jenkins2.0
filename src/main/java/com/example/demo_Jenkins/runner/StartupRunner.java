@@ -2,6 +2,7 @@ package com.example.demo_Jenkins.runner;
 
 import com.example.demo_Jenkins.service.EmailService;
 import com.example.demo_Jenkins.service.FileReaderService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,9 @@ public class StartupRunner implements CommandLineRunner {
     private final FileReaderService fileReaderService;
     private final ConfigurableApplicationContext context;
 
+    @Value("${app.environment}")
+    private String environment;
+
     public StartupRunner(EmailService emailService, FileReaderService fileReaderService,
                          ConfigurableApplicationContext context) {
         this.emailService = emailService;
@@ -27,12 +31,14 @@ public class StartupRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws IOException {
 
-        if(args.length==0){
+
+
+        if (args.length == 0) {
             System.out.println("File path required!");
             System.exit(1);
         }
 
-       String filePath=args[0];
+        String filePath = args[0];
 
         List<String> emails = fileReaderService.readEmail(filePath);
 
